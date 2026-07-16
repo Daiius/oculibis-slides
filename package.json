@@ -1,0 +1,29 @@
+{
+  "name": "oculibis-slides",
+  "version": "1.0.0",
+  "description": "Marp slides introducing oculibis (multi-repo PR auto-review bot on Codex CLI + GitHub App)",
+  "private": true,
+  "scripts": {
+    "diagrams": "for d in overview; do mmdc -i diagrams/$d.mmd -o images/$d.svg -p diagrams/puppeteer.json -c diagrams/mermaid.json -b transparent; done",
+    "build": "marp slides.md -o build/slides.html --html && cp -r images build/",
+    "build:pages": "marp slides.md -o public/index.html --html && cp -r images public/",
+    "build:pdf": "marp slides.md -o build/slides.pdf --html --allow-local-files",
+    "preview": "marp -p slides.md --html",
+    "watch": "marp -w slides.md -o build/slides.html --html"
+  },
+  "keywords": [
+    "marp",
+    "slides",
+    "oculibis",
+    "code-review",
+    "codex",
+    "github-app"
+  ],
+  "author": "Daiji Yamashita",
+  "license": "ISC",
+  "packageManager": "pnpm@10.33.2",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.4.0",
+    "@mermaid-js/mermaid-cli": "^11.15.0"
+  }
+}

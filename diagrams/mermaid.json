@@ -1,0 +1,7 @@
+{
+  "theme": "default",
+  "themeVariables": {
+    "fontSize": "20px",
+    "fontFamily": "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans CJK JP, sans-serif"
+  }
+}

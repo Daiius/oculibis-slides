@@ -1,0 +1,8 @@
+flowchart LR
+  I["GitHub App<br/>install 画面<br/>= 監視対象の管理UI"] -->|"JWT で列挙"| D["対象リポジトリ発見<br/>(.cache に clone)"]
+  D --> P["各リポの PR<br/>polling 1分 / label / comment"]
+  P --> R["Local Review Runner<br/>常駐・グローバル1本"]
+  R -->|"最小権限 clone"| X["Codex CLI<br/>--sandbox read-only"]
+  X -->|"構造化 findings (JSON)"| R
+  R -->|"投稿 / 更新"| C["managed comment<br/>open / resolved / reopened"]
+  C -.->|"次回が前回状態を継承"| R
