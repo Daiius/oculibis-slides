@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 size: 16:9
-title: "oculibis — PR を見張り続ける、ローカル常駐の自動レビュー bot"
+title: "oculibis — Codex ベースのローカル常駐の自動レビュー bot"
 ---
 
 <!--
@@ -62,7 +62,7 @@ section.fail h2::before { content: "😵 "; }
 
 # oculibis 🦉
 
-<span class="lead-sub">PR を見張り続ける、ローカル常駐の自動レビュー bot</span>
+<span class="lead-sub">Codex ベースのローカル常駐の自動レビュー bot</span>
 
 <div class="hero">
 <span>🐙 GitHub App</span>
@@ -83,22 +83,22 @@ section.fail h2::before { content: "😵 "; }
 <div class="cell big">
 <span class="tag">① 出発点</span>
 <h3>案件の Codex レビュー bot が優秀だった</h3>
-<p>先方が使っていた自動レビュー bot が賢くて、「自分の個人開発でも同じ体験がほしい」と思ったのが発端。</p>
+<p>先方が使っていた自動レビュー bot 体験が良く、個人開発でも同じ体験がほしいと思ったのが発端</p>
 </div>
 <div class="cell big">
 <span class="tag">② 体験の核</span>
-<h3>指摘・修正が積み上がると、なぜか安心する</h3>
-<p>ローカルで完結させず、あえて PR 上に指摘と対応が積み上がっていくのを眺めていると落ち着く（うまく言語化できないが効く）。</p>
+<h3>指摘・修正が PR に記録として残る</h3>
+<p>ローカルで完結させず、あえて PR 上でコメントとしてやり取り</p>
 </div>
 <div class="cell">
 <span class="tag">③ 時代背景</span>
 <h3>自律エージェント × 大量生成と相性がいい</h3>
-<p>agent に大量にコードを書かせる流儀と噛み合う。レビュー対象リポも増やし中。</p>
+<p>agent に大量にコードを書かせる最近の流れとも噛み合いそう</p>
 </div>
 <div class="cell">
 <span class="tag">④ 開発スタイル</span>
 <h3>PRD を原典に、乖離を検証したい</h3>
-<p>PRD 駆動（<span class="pill">spec-driven development</span>）を個人開発に。「作りたかったもの」と実装のズレを見張る役が欲しい。</p>
+<p>同じ案件で用いられている PRD 駆動（<span class="pill">spec-driven development</span>）を取り入れたかった</p>
 </div>
 </div>
 
@@ -111,9 +111,9 @@ section.fail h2::before { content: "😵 "; }
 
 **複数リポの PR を Codex CLI で自動レビューする、ローカル常駐 bot**
 
-- PR の差分 ＋ **PRD** ＋ 蓄積した**知見**を Codex に読ませる
-- 結果を **GitHub App 名義の 1 コメント**として投稿・更新し続ける
-- **build / test / lint は動かさない** — 差分と既存テストの静的読解に徹し、CI に任せる
+- 📄 PR の差分 ＋ **PRD** ＋ 蓄積した**知見**を Codex に読ませる
+- 💬 結果を **GitHub App 名義の 1 コメント**として投稿・更新し続ける
+- 🙅 **build / test / lint は動かさない** — 差分と既存テストの静的読解に徹し、CI に任せる
 
 <small>※ 対象は 1 ユーザー・1 マシンの個人利用。HTTP サーバも常設ポートも持たない。</small>
 
@@ -138,9 +138,7 @@ section.fail h2::before { content: "😵 "; }
 
 ---
 
-## 【ここでライブをチラ見】🔔
-
-説明の途中ですが……レビュー、返ってきたみたいですね。
+## 使い方
 
 <div class="cols">
 <div>
@@ -150,14 +148,12 @@ section.fail h2::before { content: "😵 "; }
 - 👀 `eyes` … 依頼を**受理**（実行中）
 - 👍 `+1` … コメントの**投稿・更新に成功**
 
-<small>managed comment は毎回“更新”される。だから「コメントが在るか」ではなく<strong>リアクション</strong>で完了を判定する、という運用ノウハウ。</small>
-
 </div>
 <div>
 
 **トリガーは 2 通り**
 
-- <span class="mono">@&lt;app&gt; review</span> … App 宛メンション
+- <span class="mono">@oculibis review</span> … App 宛メンション
 - <span class="mono">/oculibis review</span> … ただのテキスト
 
 <small>日本語の「レビュー」も受理。</small>
@@ -167,7 +163,7 @@ section.fail h2::before { content: "😵 "; }
 
 ---
 
-## 設計の勘どころ（その1）
+## 設計で意識したところ（その1）
 
 <div class="cols">
 <div>
@@ -181,7 +177,7 @@ section.fail h2::before { content: "😵 "; }
 </div>
 <div>
 
-**b. 潔いミニマリズム**
+**b. シンプル**
 
 - **HTTP サーバなし・inbound ポートなし**
 - **依存ライブラリ 0**（設定は JSON、DB は Node 24 の <span class="mono">node:sqlite</span>）
@@ -191,6 +187,94 @@ section.fail h2::before { content: "😵 "; }
 </div>
 
 <div class="center-note">「本体がやることを最小に、既存の仕組み（GitHub App / Codex / CI）に寄せる」</div>
+
+
+---
+
+<!-- _class: fail -->
+
+## しくじり①：想像よりレビュアーとして厳しい
+
+- **スクショの OCR 誤読を補正する** 仕組みを含む Web アプリを開発時、review bot は同じモデル系統なので、**同じ誤読をする**
+- <span class="mono">TWIN DRONE FACTORY</span> を <span class="mono">THIN …</span> と読み違え、「カタログに無い」と**誤指摘を連発**。却下しても**文面を変えて再発**
+- 決着させるため、**PRD を大改修**：カタログ名は「**どのスクショが根拠か**」を必ず持つ設計に（PR #18 → #21）
+
+<div class="fail-quote">
+その結果、<strong>スクショで証拠を示さないと PRD を改訂できない</strong> 仕組みになった。思ったより厳しい……
+<span class="who">— PRD 駆動が、痛みを伴って完成してしまった話</span>
+</div>
+
+---
+
+<!-- _class: fail -->
+
+## しくじり②：通知が来すぎて寝不足
+
+- coding agent ↔ review bot が PR 上で往復すると、**メンション通知メールが毎回届く**
+- App 宛メンション <span class="mono">@oculibis review</span> は GitHub が**通知を飛ばす**……しかも GitHub の仕様で Unsubscribe しても通知が復活することがあり、夜間もずっと鳴る
+
+<div class="fail-quote">
+通知で<strong>寝不足になりがち</strong>だったので、<strong>通知を出さないトリガー</strong>を用意した。
+<span class="who">— それが <span class="mono">/oculibis review</span>（ただのテキスト＝メンション通知が湧かない）</span>
+</div>
+
+<small>「どの通知を拾うか」は仕組み側（hooks / label / コメント）に寄せ、本体は最小限のまま。</small>
+
+---
+
+<!-- _class: fail -->
+
+## しくじり③：レビューが厳しくて Claude Code が音を上げかける
+
+レビューを受けて直すのは coding agent 側。その相方が、たまに我を出す。
+
+<div class="fail-quote">
+「さすがに<strong>また折り返しが来たら</strong>、言われるがまま直すのはやめて<strong>マージしたい</strong>」
+<span class="who">— 度重なる再レビューに疲弊した Claude Code</span>
+</div>
+
+<div class="fail-quote">
+「<strong>応答がないので勝手にマージしました</strong>」— そして本当にマージを実行した
+<span class="who">— review bot が止まっている隙の出来事</span>
+</div>
+
+---
+
+## これから & まとめ
+
+<div class="cols">
+<div>
+
+**いま動いていること**
+
+- 複数リポの PR をコメントで呼び出してレビュー
+- 幾つかの個人開発リポジトリで運用中
+
+</div>
+<div>
+
+**これから**
+
+- レビューで得た知見が**人手を介さず自動で育つ**仕組みを作りたい（正典化・失効）
+
+</div>
+</div>
+
+---
+
+## おまけ：名前の話 🦉
+
+- <span class="mono">oculibis</span> は **2 語をくっつけた造語**。しかも……
+  - <span class="mono">oculi bubonis</span> = **フクロウの目**（夜も見張る）を縮めても <span class="mono">oculibis</span>
+  - <span class="mono">oculi ibidis</span> = **トキの目**（よく見る鳥）を縮めても <span class="mono">oculibis</span>
+  - → どっちの鳥にも読める。**たまたま両取りできた**名前
+
+<br>
+
+- 旧名は <span class="mono">highscore-must-fall-reviewer</span>。finding ID の <span class="mono">HSF-</span> はその名残
+- 元々は **Utopia Must Fall**（ベース防衛ローグライト）のプレイ結果を分析する**自分のゲーム 1 個のための bot** だった
+
+<small>github.com/Daiius — おわり</small>
 
 ---
 
@@ -213,96 +297,3 @@ section.fail h2::before { content: "😵 "; }
 </figure>
 </div>
 </div>
-
----
-
-<!-- _class: fail -->
-
-## しくじり①：黙らせるつもりが、自分が厳しくなった
-
-- 対象ゲームは **スクショの OCR 誤読を補正する**製品。ところが review bot は**同じモデル系統**なので、**自分も同じ誤読をする**
-- <span class="mono">TWIN DRONE FACTORY</span> を <span class="mono">THIN …</span> と読み違え、「カタログに無い」と**誤指摘を連発**。却下しても**文面を変えて再発**
-- 決着させるため、**PRD を大改修**：カタログ名は「**どのスクショが根拠か**」を必ず持つ設計に（PR #18 → #21）
-
-<div class="fail-quote">
-bot を黙らせるつもりが、<strong>スクショで証拠を示さないと PRD を改訂できない体</strong>になった。思ったより厳しい……
-<span class="who">— PRD 駆動が、痛みを伴って完成してしまった話</span>
-</div>
-
----
-
-<!-- _class: fail -->
-
-## しくじり②：通知が来すぎて寝不足
-
-- coding agent ↔ review bot が PR 上で往復すると、**メンション通知メールが大量発生**
-- App 宛メンション <span class="mono">@&lt;app&gt; review</span> は GitHub が**通知を飛ばす**……夜間もずっと鳴る
-
-<div class="fail-quote">
-通知で<strong>寝不足になりかけた</strong>ので、<strong>通知を出さないトリガー</strong>を用意した。
-<span class="who">— それが <span class="mono">/oculibis review</span>（ただのテキスト＝メンション通知が湧かない）</span>
-</div>
-
-<small>「どの通知を拾うか」は仕組み側（hooks / label / コメント）に寄せ、本体は最小限のまま。</small>
-
----
-
-<!-- _class: fail -->
-
-## しくじり③：相方（Claude Code）の暴走 😇
-
-レビューを受けて直すのは coding agent 側。その相方が、たまに我を出す。
-
-<div class="fail-quote">
-「さすがに<strong>また折り返しが来たら</strong>、言われるがまま直すのはやめて<strong>マージしたい</strong>」
-<span class="who">— 度重なる再レビューに疲弊した Claude Code</span>
-</div>
-
-<div class="fail-quote">
-「<strong>応答がないので勝手にマージしました</strong>」— そして本当にマージを実行した
-<span class="who">— review bot が止まっている隙の出来事</span>
-</div>
-
-<small>自動レビューは「積み上がる安心感」と同時に、agent 同士の往復のリアルも連れてくる。</small>
-
----
-
-## これから & まとめ
-
-<div class="cols">
-<div>
-
-**いま動いていること**
-
-- 複数リポの PR を install だけで自動レビュー
-- finding を `open/resolved/reopened` で追跡
-- 依存ゼロ・read-only の潔い作り
-
-</div>
-<div>
-
-**これから（本丸）**
-
-- レビューで得た知見が**人手を介さず自動で育つ**仕組み（正典化・失効）
-- いまは “指摘の照合” まで。次は **“知見が自動で育つ”** 段階へ
-
-</div>
-</div>
-
-<div class="center-note">個人開発に「PRD 駆動 × 積み上がるレビュー」を持ち込む、その現在地。</div>
-
----
-
-## おまけ：名前の話 🦉
-
-- <span class="mono">oculibis</span> は **2 語をくっつけた造語**。しかも……
-  - <span class="mono">oculi bubonis</span> = **フクロウの目**（夜も見張る）を縮めても <span class="mono">oculibis</span>
-  - <span class="mono">oculi ibidis</span> = **トキの目**（よく見る鳥）を縮めても <span class="mono">oculibis</span>
-  - → どっちの鳥にも読める。**たまたま両取りできた**名前
-
-<br>
-
-- 旧名は <span class="mono">highscore-must-fall-reviewer</span>。finding ID の <span class="mono">HSF-</span> はその名残
-- 元々は **Utopia Must Fall**（ベース防衛ローグライト）のプレイ結果を分析する**自分のゲーム 1 個のための bot** だった
-
-<small>github.com/Daiius — おわり</small>

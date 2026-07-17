@@ -1,0 +1,50 @@
+name: Deploy slides to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時に走らせない（古いデプロイは取り消す）
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # mermaid SVG はコミット済みなので、ここでは marp-cli だけ使う（Chromium 不要）。
+      # puppeteer のビルドスクリプトは pnpm が既定でスキップするため Chromium はダウンロードされない。
+      - run: pnpm install --frozen-lockfile
+
+      # slides.md -> public/index.html ＋ images/ をコピー
+      - run: pnpm build:pages
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
