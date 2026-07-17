@@ -106,25 +106,15 @@ section.fail h2::before { content: "😵 "; }
 
 ## 作ったもの
 
-<div class="cols">
-<div>
-
 **複数リポの PR を Codex CLI で自動レビューする、ローカル常駐 bot**
 
 - 📄 PR の差分 ＋ **PRD** ＋ 蓄積した**知見**を Codex に読ませる
 - 💬 結果を **GitHub App 名義の 1 コメント**として投稿・更新し続ける
 - 🙅 **build / test / lint は動かさない** — 差分と既存テストの静的読解に徹し、CI に任せる
 
-<small>※ 対象は 1 ユーザー・1 マシンの個人利用。HTTP サーバも常設ポートも持たない。</small>
+実際のレビューはこんな感じ → [github.com/Daiius/seseraki/pull/11](https://github.com/Daiius/seseraki/pull/11)
 
-</div>
-<div>
-<figure class="shot-fig">
-<div class="shot">スクショ: 初回レビューの<br>managed comment<br>（チェックボックス付き findings）<br><br><small>images/comment-initial.png に差し替え</small></div>
-<figcaption>1 つのコメントが育っていく</figcaption>
-</figure>
-</div>
-</div>
+<small>※ 対象は 1 ユーザー・1 マシンの個人利用。HTTP サーバも常設ポートも持たない。</small>
 
 ---
 
